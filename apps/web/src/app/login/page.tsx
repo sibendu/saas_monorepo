@@ -37,7 +37,7 @@ export default function LoginPage() {
       if (result?.error) {
         setError(`Login failed: ${result.error}`)
       } else if (result?.ok) {
-        router.push('/customers')
+        router.push('/dashboard')
         router.refresh()
       }
     } catch (err) {
@@ -54,7 +54,7 @@ export default function LoginPage() {
         method: 'DELETE',
       })
 
-      await signIn(provider, { callbackUrl: '/customers' })
+      await signIn(provider, { callbackUrl: '/dashboard' })
     } catch (err) {
       setError(`An error occurred while signing in with ${provider}.`)
     }

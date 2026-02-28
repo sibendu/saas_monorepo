@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import customersRouter from './routes/customers';
+import dashboardRouter from './routes/dashboard';
 
 const app: Express = express();
 const PORT = process.env.PORT || 3001;
@@ -30,6 +31,7 @@ app.get('/health', (req: Request, res: Response) => {
 
 // Routes
 app.use('/api', customersRouter);
+app.use('/api', dashboardRouter);
 
 // 404 handler
 app.use((req: Request, res: Response) => {

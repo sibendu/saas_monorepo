@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
+import AppShell from '@/components/AppShell'
 
 export default function PreferencesPage() {
     const router = useRouter()
@@ -95,7 +96,7 @@ export default function PreferencesPage() {
             console.log('Preferences updated successfully')
             // Update session to refresh user data and clear isNewUser flag
             await update()
-            router.push('/customers')
+            router.push('/dashboard')
         } catch (err: any) {
             setError(err.message || 'An error occurred while updating preferences.')
         } finally {
@@ -115,8 +116,12 @@ export default function PreferencesPage() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-blue-100 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full space-y-8">
+        <AppShell
+            user={session?.user}
+            pageTitle="Preferences"
+            pageSubtitle="Configure your account preferences"
+        >
+            <div className="max-w-md w-full mx-auto space-y-8">
                 <div className="bg-white rounded-2xl shadow-2xl p-10 transform transition-all">
                     <div className="text-center mb-10">
                         <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-indigo-600">
@@ -209,6 +214,6 @@ export default function PreferencesPage() {
                     </form>
                 </div>
             </div>
-        </div>
+        </AppShell>
     )
 }
