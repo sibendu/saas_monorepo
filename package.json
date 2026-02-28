@@ -1,0 +1,22 @@
+{
+  "name": "saas-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:web\" \"npm run dev:bff\"",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "dev:bff": "npm run dev --workspace=apps/bff",
+    "build": "npm run build --workspaces",
+    "build:web": "npm run build --workspace=apps/web",
+    "build:bff": "npm run build --workspace=apps/bff",
+    "type-check": "npm run type-check --workspaces"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "typescript": "^5.3.3"
+  }
+}

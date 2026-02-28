@@ -1,0 +1,28 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum RegistrationType {
+  GOOGLE
+  GITHUB
+  DIRECT
+}
+
+model Customer {
+  id               Int              @id @default(autoincrement())
+  email            String           @map("username")
+  password         String
+  name             String
+  company          String?
+  registrationType RegistrationType @default(DIRECT) @map("registration_type")
+
+  @@map("customer")
+}
