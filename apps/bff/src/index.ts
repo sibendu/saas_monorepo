@@ -52,10 +52,12 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`🚀 BFF server running on http://localhost:${PORT}`);
-  console.log(`📊 Health check: http://localhost:${PORT}/health`);
-  console.log(`👥 Customers API: http://localhost:${PORT}/api/customers`);
-});
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`🚀 BFF server running on http://localhost:${PORT}`);
+    console.log(`📊 Health check: http://localhost:${PORT}/health`);
+    console.log(`👥 Customers API: http://localhost:${PORT}/api/customers`);
+  });
+}
 
 export default app;

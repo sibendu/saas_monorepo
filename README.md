@@ -46,6 +46,13 @@ npm run dev:web   # Next.js on http://localhost:3000
 npm run dev:bff   # BFF on http://localhost:3001
 ```
 
+### Test
+
+npm run test - this will run all tests other than e2e
+
+To run e2e tests with browser (not headless mode)
+npm run -w apps/web test:e2e -- --headed  
+
 ### Build
 
 ```bash

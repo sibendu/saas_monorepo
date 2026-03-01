@@ -13,7 +13,13 @@
     "build": "npm run build --workspaces",
     "build:web": "npm run build --workspace=apps/web",
     "build:bff": "npm run build --workspace=apps/bff",
-    "type-check": "npm run type-check --workspaces"
+    "type-check": "npm run type-check --workspaces",
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "npm run test:unit --workspace=apps/web && npm run test:unit --workspace=apps/bff",
+    "test:integration": "npm run test:integration --workspace=apps/web && npm run test:integration --workspace=apps/bff",
+    "test:e2e": "npm run test:e2e --workspace=apps/web",
+    "test:e2e:install": "npm run test:e2e:install --workspace=apps/web",
+    "test:all": "npm run test && npm run test:e2e"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
