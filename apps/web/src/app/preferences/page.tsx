@@ -11,7 +11,6 @@ export default function PreferencesPage() {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
-        username: '',
         company: '',
     })
     const [error, setError] = useState('')
@@ -30,7 +29,6 @@ export default function PreferencesPage() {
                         setFormData({
                             name: data.name || '',
                             email: data.email || session.user.email || '',
-                            username: (session.user as any).username || session.user.email || '',
                             company: data.company || '',
                         })
                     } else {
@@ -38,7 +36,6 @@ export default function PreferencesPage() {
                         setFormData({
                             name: session.user.name || '',
                             email: session.user.email || '',
-                            username: (session.user as any).username || session.user.email || '',
                             company: '',
                         })
                     }
@@ -48,7 +45,6 @@ export default function PreferencesPage() {
                     setFormData({
                         name: session.user.name || '',
                         email: session.user.email || '',
-                        username: (session.user as any).username || session.user.email || '',
                         company: '',
                     })
                 }
@@ -143,20 +139,6 @@ export default function PreferencesPage() {
                                 className="w-full px-5 py-3 bg-gray-100 border border-gray-300 rounded-xl text-gray-500 cursor-not-allowed"
                             />
                             <p className="text-xs text-gray-400 mt-1">Email cannot be changed</p>
-                        </div>
-
-                        <div>
-                            <label htmlFor="username" className="block text-sm font-semibold text-gray-700 mb-2">
-                                Username
-                            </label>
-                            <input
-                                id="username"
-                                type="text"
-                                value={formData.username}
-                                disabled
-                                className="w-full px-5 py-3 bg-gray-100 border border-gray-300 rounded-xl text-gray-500 cursor-not-allowed"
-                            />
-                            <p className="text-xs text-gray-400 mt-1">Username cannot be changed</p>
                         </div>
 
                         <div>

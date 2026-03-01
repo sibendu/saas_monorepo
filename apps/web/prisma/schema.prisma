@@ -23,6 +23,8 @@ model Customer {
   name             String
   company          String?
   registrationType RegistrationType @default(DIRECT) @map("registration_type")
+  passwordResetToken String?        @map("password_reset_token")
+  passwordResetExpiresAt DateTime?  @map("password_reset_expires_at")
 
   @@map("customer")
 }

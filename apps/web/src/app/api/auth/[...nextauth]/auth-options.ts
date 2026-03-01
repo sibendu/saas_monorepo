@@ -44,9 +44,21 @@ export const authOptions: NextAuthOptions = {
             }
           });
 
+          const customerWithRegistrationType = customer as typeof customer & {
+            registrationType?: 'GOOGLE' | 'GITHUB' | 'DIRECT'
+          }
+
           if (!customer) {
             console.log('FAIL: Customer not found');
-            return null;
+            throw new Error('EMAIL_NOT_REGISTERED');
+          }
+
+          if (
+            customerWithRegistrationType.registrationType === 'GOOGLE' ||
+            customerWithRegistrationType.registrationType === 'GITHUB'
+          ) {
+            console.log(`FAIL: Social account for ${customerWithRegistrationType.registrationType}`)
+            throw new Error(`SOCIAL_LOGIN_REQUIRED:${customerWithRegistrationType.registrationType}`)
           }
 
           // Verify password
@@ -54,7 +66,7 @@ export const authOptions: NextAuthOptions = {
 
           if (!isValidPassword) {
             console.log('FAIL: Invalid password');
-            return null;
+            throw new Error('WRONG_EMAIL_OR_PASSWORD');
           }
 
           console.log('SUCCESS: Customer authenticated');
@@ -68,6 +80,14 @@ export const authOptions: NextAuthOptions = {
           };
         } catch (error) {
           console.error('ERROR in authorize:', error);
+          if (
+            error instanceof Error &&
+            (error.message === 'EMAIL_NOT_REGISTERED' ||
+              error.message === 'WRONG_EMAIL_OR_PASSWORD' ||
+              error.message.startsWith('SOCIAL_LOGIN_REQUIRED:'))
+          ) {
+            throw error
+          }
           return null;
         } finally {
           console.log('--- AUTH DEBUG END ---');
@@ -119,6 +139,10 @@ export const authOptions: NextAuthOptions = {
             where: { email }
           })
 
+          const existingCustomerWithRegistrationType = existingCustomer as typeof existingCustomer & {
+            registrationType?: 'GOOGLE' | 'GITHUB' | 'DIRECT'
+          }
+
           if (!existingCustomer) {
             if (!isRegisterIntent) {
               console.log(`OAuth login denied: customer not found for ${email}`)
@@ -151,6 +175,16 @@ export const authOptions: NextAuthOptions = {
             user.name = newCustomer.name
             user.isNewUser = true
             return true
+          }
+
+          const expectedRegistrationType = existingCustomerWithRegistrationType.registrationType
+          const currentProviderType = account.provider === 'google' ? 'GOOGLE' : 'GITHUB'
+
+          if (expectedRegistrationType && expectedRegistrationType !== currentProviderType) {
+            console.log(
+              `OAuth login denied: provider mismatch (expected ${expectedRegistrationType}, got ${currentProviderType})`
+            )
+            return `/login?error=social_login_mismatch&expected=${expectedRegistrationType}`
           }
 
           console.log(`Customer found for OAuth email: ${email}`)

@@ -17,8 +17,43 @@ export default function LoginPage() {
     const authError = searchParams.get('error')
     if (authError === 'create_account_first') {
       setError('No account found for this Google/GitHub email. Please create an account first.')
+      return
+    }
+
+    if (authError === 'social_login_mismatch') {
+      const expected = searchParams.get('expected')
+      if (expected === 'GOOGLE' || expected === 'GITHUB') {
+        setError(`Please login with your ${expected} account`)
+        return
+      }
+
+      if (expected === 'DIRECT') {
+        setError('Please login with your EMAIL/PASSWORD')
+        return
+      }
+
+      setError('Please login using your registered method')
     }
   }, [searchParams])
+
+  const getLoginErrorMessage = (errorCode: string) => {
+    if (errorCode === 'EMAIL_NOT_REGISTERED') {
+      return 'Email not registered'
+    }
+
+    if (errorCode === 'WRONG_EMAIL_OR_PASSWORD') {
+      return 'Wrong email and/or password'
+    }
+
+    if (errorCode.startsWith('SOCIAL_LOGIN_REQUIRED:')) {
+      const registrationType = errorCode.split(':')[1]
+      if (registrationType === 'GOOGLE' || registrationType === 'GITHUB') {
+        return `Please login with your ${registrationType} account`
+      }
+    }
+
+    return 'Login failed. Please try again.'
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -35,7 +70,7 @@ export default function LoginPage() {
       })
 
       if (result?.error) {
-        setError(`Login failed: ${result.error}`)
+        setError(getLoginErrorMessage(result.error))
       } else if (result?.ok) {
         router.push('/dashboard')
         router.refresh()
@@ -61,20 +96,20 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="bg-white rounded-2xl shadow-2xl p-10 transform transition-all hover:scale-[1.01]">
-          <div className="text-center mb-10">
-            <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-6">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 transform transition-all hover:scale-[1.01]">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
               Welcome Back
             </h1>
-            <p className="text-gray-500 mt-3 text-lg">Sign in to your account</p>
+            <p className="text-gray-500 mt-2">Sign in to your account</p>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mb-8">
+          <div className="grid grid-cols-2 gap-3 mb-6">
             <button
               onClick={() => handleSocialLogin('google')}
-              className="flex items-center justify-center gap-3 px-4 py-3 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors group"
+              className="flex items-center justify-center gap-2 px-3 py-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors group"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path
@@ -98,7 +133,7 @@ export default function LoginPage() {
             </button>
             <button
               onClick={() => handleSocialLogin('github')}
-              className="flex items-center justify-center gap-3 px-4 py-3 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors group"
+              className="flex items-center justify-center gap-2 px-3 py-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors group"
             >
               <svg className="w-5 h-5 text-gray-900" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.43.372.823 1.102.823 2.222 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
@@ -107,7 +142,7 @@ export default function LoginPage() {
             </button>
           </div>
 
-          <div className="relative mb-8">
+          <div className="relative mb-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-200"></div>
             </div>
@@ -116,9 +151,9 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-1.5">
                 Email
               </label>
               <input
@@ -126,14 +161,14 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-5 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-gray-900 placeholder-gray-400"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-gray-900 placeholder-gray-400"
                 placeholder="you@example.com"
                 required
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-1.5">
                 Password
               </label>
               <input
@@ -141,14 +176,14 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-5 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-gray-900 placeholder-gray-400"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-gray-900 placeholder-gray-400"
                 placeholder="••••••••"
                 required
               />
             </div>
 
             {error && (
-              <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-lg text-sm font-medium animate-pulse">
+              <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-3 rounded-lg text-sm font-medium animate-pulse">
                 {error}
               </div>
             )}
@@ -156,7 +191,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all font-bold text-lg shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3.5 rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all font-bold text-base shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -170,20 +205,21 @@ export default function LoginPage() {
                 'Sign In'
               )}
             </button>
+
+            <div className="text-right">
+              <Link href="/forgot-password" className="text-sm text-indigo-600 font-semibold hover:text-indigo-500 transition-colors">
+                Forgot password?
+              </Link>
+            </div>
           </form>
 
-          <div className="mt-8 text-center border-t border-gray-100 pt-8">
+          <div className="mt-6 text-center border-t border-gray-100 pt-6">
             <p className="text-gray-600">
               Don't have an account?{' '}
               <Link href="/register" className="text-indigo-600 font-bold hover:text-indigo-500 transition-colors">
                 Sign Up for an Account
               </Link>
             </p>
-            <div className="mt-4 p-4 bg-indigo-50 rounded-xl">
-              <p className="text-sm text-indigo-700">
-                Sign in with your registered email and password
-              </p>
-            </div>
           </div>
         </div>
       </div>
