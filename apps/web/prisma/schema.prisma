@@ -16,6 +16,13 @@ enum RegistrationType {
   DIRECT
 }
 
+enum TaskPriority {
+  Low
+  Medium
+  High
+  Critical
+}
+
 model Customer {
   id               Int              @id @default(autoincrement())
   email            String           @map("username")
@@ -27,4 +34,16 @@ model Customer {
   passwordResetExpiresAt DateTime?  @map("password_reset_expires_at")
 
   @@map("customer")
+}
+
+model Task {
+  id       Int          @id @default(autoincrement())
+  taskId   String       @unique @map("task_id")
+  title    String
+  project  String
+  priority TaskPriority
+  date     DateTime
+  owner    String
+
+  @@map("task")
 }

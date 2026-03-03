@@ -10,9 +10,16 @@ export default defineConfig({
       "src/**/*.unit.test.{ts,tsx}",
       "src/**/*.integration.test.{ts,tsx}",
     ],
+    reporters: ['default', 'junit', 'json'],
+    outputFile: {
+      junit: './reports/junit.xml',
+      json: './reports/results.json',
+    },
     coverage: {
+      enabled: true,
       provider: 'v8',
-      reporter: ['text', 'html'],
+      reporter: ['text', 'html', 'lcov'],
+      reportsDirectory: './reports/coverage',
     },
   },
   resolve: {

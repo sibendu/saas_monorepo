@@ -35,6 +35,7 @@ describe('AppShell', () => {
     expect(screen.getByText('Dashboard Content')).toBeInTheDocument()
     expect(screen.getByText('Demo User')).toBeInTheDocument()
     expect(screen.getByText('Customers')).toBeInTheDocument()
+    expect(screen.getByText('Task List')).toBeInTheDocument()
     expect(screen.getByText('Preferences')).toBeInTheDocument()
   })
 

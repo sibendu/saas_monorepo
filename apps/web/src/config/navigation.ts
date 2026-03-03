@@ -46,6 +46,11 @@ export const menuSections: MenuSectionConfig[] = [
         icon: 'users',
       },
       {
+        label: 'Task List',
+        href: '/tasks',
+        icon: 'workspace',
+      },
+      {
         label: 'Preferences',
         href: '/preferences',
         icon: 'profile',

@@ -35,8 +35,17 @@ npm install --workspaces
 C:\Software\PostgreSQL\18\bin\pg_ctl start -D C:\Software\PostgreSQL\18\data
 
 ## Prisma commands to sync database schema
-npx prisma migrate dev --name add-registration-typ
+npx prisma migrate dev --name add-registration-type
 npx prisma migrate
+
+set DATABASE_URL=postgresql://postgres:password@localhost:5432/postgres
+
+From repo root, apply migrations
+npm exec --workspace=apps/web prisma migrate deploy --schema prisma/schema.prisma
+
+Regenerate Prisma client
+npm exec --workspace=apps/web prisma generate --schema prisma/schema.prisma
+
 
 # Run both web and bff in development mode
 npm run dev
@@ -133,3 +142,14 @@ When you need to extract embedded routes to BFF:
 2. Update web app to call BFF endpoint instead
 3. Remove old embedded route
 4. Types remain shared via `packages/shared-types`
+
+
+# Appendix
+
+## Reset all git changes since last commit
+git reset --hard HEAD
+git clean -fd
+
+
+## FEnerate features from ADO issues
+Get description and comments for Issue#<..> from project 'test' in ADO, and implement it.

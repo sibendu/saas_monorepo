@@ -33,6 +33,20 @@ export interface CustomersResponse {
   total: number;
 }
 
+export interface Task {
+  taskId: string;
+  title: string;
+  project: string;
+  priority: 'Low' | 'Medium' | 'High' | 'Critical';
+  date: string;
+  owner: string;
+}
+
+export interface TasksResponse {
+  tasks: Task[];
+  total: number;
+}
+
 export interface DashboardKpi {
   label: string;
   value: string;
